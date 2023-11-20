@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:markdown_file_load/terms_of_use.dart';
-import 'package:markdown_file_load/privacy_policy.dart';
-import 'package:markdown_file_load/about_us.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -10,64 +9,34 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TermsOfUse(),
-                        ));
-                  },
-                  child: const Text(
-                    'Term of use',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PrivacyPolicy(),
-                        ));
-                  },
-                  child: const Text(
-                    'Privacy policy',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AboutUs(),
-                        ));
-                  },
-                  child: const Text(
-                    'About us',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ))
-            ],
-          ),
+        child: FutureBuilder(
+          future: rootBundle.loadString("assets/term_of_use.md"),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Markdown(
+                data: snapshot.data!,
+                styleSheet: MarkdownStyleSheet(
+                  h1Align: WrapAlignment.center,
+                  h1: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    ///for spacing above underline
+                    /*  decoration: TextDecoration.underline,
+                      color: Colors.transparent,
+                      shadows:[
+                        Shadow(offset: Offset(0,-5),color: Colors.black),
+                      ]*/
+                  ),
+                  h6Align: WrapAlignment.spaceEvenly,
+                ),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ),
       ),
     );
   }
 }
-
